@@ -13,6 +13,14 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 mongo = PyMongo(app)
 
+@app.route("/health")
+def health():
+    try:
+        mongo.db.command("ping")
+        return {"status": "ok", "mongodb": "connected"}, 200
+    except Exception as e:
+        return {"status": "error", "mongodb": "disconnected"}, 500
+
 # Home page -> list students
 @app.route('/')
 def index():
