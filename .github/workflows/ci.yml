@@ -1,5 +1,5 @@
+# GitHub Actions CI/CD pipeline for Flask application
 name: Flask CI/CD
-
 on:
   push:
     branches:
