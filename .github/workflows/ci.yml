@@ -12,6 +12,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+    env:
+      MONGO_URI: mongodb://localhost:27017/test_student_db
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,7 +28,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: "3.12"
+
+      - name: Verify Python version
+        run: python --version
 
       - name: Install dependencies
         run: |
