@@ -84,3 +84,6 @@ jobs:
         run: |
           docker push \
             230470759851.dkr.ecr.us-east-1.amazonaws.com/flask-practice-repo:latest
+
+# Email notification recipient
+# Replace this with your verified GitHub/Gmail address
