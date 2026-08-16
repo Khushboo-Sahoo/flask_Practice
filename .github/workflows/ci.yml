@@ -1,4 +1,4 @@
-name: Flask CI
+name: Flask CI/CD
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -45,3 +48,39 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t flask-practice:latest .
+
+  push-to-ecr:
+    needs: test
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t flask-practice-repo:latest .
+
+      - name: Tag Docker image
+        run: |
+          docker tag flask-practice-repo:latest \
+            230470759851.dkr.ecr.us-east-1.amazonaws.com/flask-practice-repo:latest
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push \
+            230470759851.dkr.ecr.us-east-1.amazonaws.com/flask-practice-repo:latest
